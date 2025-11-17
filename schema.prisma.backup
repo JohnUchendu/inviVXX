@@ -1,0 +1,286 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String?
+  plan           String    @default("free")
+  subscriptionId String?
+  emailVerified  DateTime?
+  image          String?
+  password       String?
+  invoices       Invoice[] // ← 1-to-many
+  accounts       Account[]
+  sessions       Session[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Invoice {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id]) // ← ADD THIS
+  userId          String
+  invoiceNumber   String    @unique
+  businessName    String
+  businessEmail   String?
+  businessPhone   String?
+  businessWebsite String?
+  businessLogo    String?
+  clientName      String
+  clientEmail     String?
+  clientAddress   String
+  items           Json
+  currency        String    @default("NGN")
+  subtotal        Float
+  vatEnabled      Boolean   @default(false)
+  vatPercentage   Float     @default(7.5)
+  vatAmount       Float     @default(0)
+  total           Float
+  notes           String?
+  paymentRef      String?   @unique
+  paymentStatus   String    @default("pending")
+  emailStatus     String?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+} 
+
+
+
+
+//new backup 
+
+
+
+
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String?
+  plan           String    @default("free") // free, starter, growth, premium
+  subscriptionId String?
+  emailVerified  DateTime?
+  image          String?
+  password       String?
+  invoices       Invoice[]
+  clients        Client[]  // Add this relation
+  accounts       Account[]
+  sessions       Session[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  monthlyInvoiceLimit Int  @default(3) // For free tier limits
+  invoiceCountThisMonth Int @default(0) // Track monthly usage
+  lastResetDate  DateTime  @default(now()) // For monthly reset
+  businessName   String?
+  businessEmail  String?
+  businessPhone  String?
+  businessAddress String?
+  businessLogo     String?
+// brandColor       String?   @default("#2563eb")
+// customTemplates  InvoiceTemplate[]
+  
+  // Add these for better tracking
+  lastInvoiceReset DateTime @default(now())
+  invoicesSentToday Int @default(0)
+
+  // Bank account details
+  bankCode            String?
+  accountNumber       String?
+  accountName         String?
+  bankName            String?
+  paystackRecipientCode String?
+  
+  // Settlement preferences
+  settlementSchedule  String?   @default("daily") // daily, weekly, monthly
+  minimumPayout       Float?    @default(0) // Minimum balance for auto-payout
+  
+  @@map("users")
+}
+
+model Invoice {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String
+  client          Client?   @relation(fields: [clientId], references: [id]) // Add this relation
+  clientId        String?   // Make client optional for backward compatibility
+  invoiceNumber   String    @unique
+  businessName    String
+  businessEmail   String?
+  businessPhone   String?
+  businessWebsite String?
+  businessLogo    String?
+  businessRegNo   String?
+  businessTin     String?
+  clientName      String
+  clientEmail     String?
+  clientAddress   String
+  items           Json
+  currency        String    @default("NGN")
+  subtotal        Float
+  vatEnabled      Boolean   @default(false)
+  vatPercentage   Float     @default(7.5)
+  vatAmount       Float     @default(0)
+  total           Float
+  notes           String?
+  paymentRef      String?   @unique
+  paymentStatus   String    @default("pending")
+  emailStatus     String?
+  emailId         String?
+  signature       String?
+  paymentOption   String?
+  template        String    @default("basic")
+  qrCode          String?
+  openedAt        DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@index([clientId]) // Add index for client relation
+
+  / Payment tracking
+  paymentRef      String?   @unique
+  paymentStatus   String    @default("pending") // pending, paid, failed, refunded
+  paidAt          DateTime?
+  paymentMethod   String?   // card, bank_transfer, ussd, etc.
+  amountPaid      Float?
+  
+  // Email tracking with Resend
+  emailId         String?
+  emailStatus     String?   // sent, delivered, opened, bounced, complained
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  openedCount     Int       @default(0)
+  lastOpenedAt    DateTime?
+  clickedAt       DateTime?
+  clickCount      Int       @default(0)
+  lastClickedAt   DateTime?
+  bouncedAt       DateTime?
+  complainedAt    DateTime?
+  
+  // QR Code for payments
+  qrCode          String?
+  
+  @@index([paymentStatus])
+  @@index([emailStatus])
+  @@index([paidAt])
+
+}
+
+model Client {
+  id          String    @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  company     String?
+  taxId       String?
+  notes       String?
+  
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  invoices    Invoice[] // This relation now matches Invoice.client
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, email])
+  @@index([userId])
+  @@index([userId, name])
+}
+
+
+
+model InvoiceTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("professional") // professional, minimal, modern, classic
+  colors      Json?    // Custom color scheme
+  layout      Json?    // Template layout configuration
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+}

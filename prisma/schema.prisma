@@ -1,0 +1,185 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String?
+  plan           String    @default("free") // free, starter, growth, premium
+  subscriptionId String?
+  emailVerified  DateTime?
+  image          String?
+  password       String?
+  invoices       Invoice[]
+  clients        Client[]
+  accounts       Account[]
+  sessions       Session[]
+  invoiceTemplates InvoiceTemplate[] // ADD THIS RELATION
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  monthlyInvoiceLimit Int  @default(3)
+  invoiceCountThisMonth Int @default(0)
+  lastResetDate  DateTime  @default(now())
+  businessName   String?
+  businessEmail  String?
+  businessPhone  String?
+  businessAddress String?
+  businessLogo   String?
+  lastInvoiceReset DateTime @default(now())
+  invoicesSentToday Int @default(0)
+  bankCode       String?
+  accountNumber  String?
+  accountName    String?
+  bankName       String?
+  paystackRecipientCode String?
+  settlementSchedule String? @default("daily")
+  minimumPayout  Float?    @default(0)
+  
+  @@map("users")
+}
+
+model Invoice {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String
+  client          Client?   @relation(fields: [clientId], references: [id])
+  clientId        String?
+  invoiceNumber   String    @unique
+  businessName    String
+  businessEmail   String?
+  businessPhone   String?
+  businessWebsite String?
+  businessLogo    String?
+  businessRegNo   String?
+  businessTin     String?
+  clientName      String
+  clientEmail     String?
+  clientAddress   String
+  items           Json
+  currency        String    @default("NGN")
+  subtotal        Float
+  vatEnabled      Boolean   @default(false)
+  vatPercentage   Float     @default(7.5)
+  vatAmount       Float     @default(0)
+  total           Float
+  notes           String?
+  template        String    @default("basic")
+  
+  // Payment tracking
+  paymentRef      String?   @unique
+  paymentStatus   String    @default("pending")
+  paidAt          DateTime?
+  paymentMethod   String?
+  amountPaid      Float?
+  
+  // Email tracking with Resend
+  emailId         String?
+  emailStatus     String?
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  openedCount     Int       @default(0)
+  lastOpenedAt    DateTime?
+  clickedAt       DateTime?
+  clickCount      Int       @default(0)
+  lastClickedAt   DateTime?
+  bouncedAt       DateTime?
+  complainedAt    DateTime?
+  
+  // QR Code for payments
+  qrCode          String?
+  signature       String?
+  
+// ADD THESE FIELDS for payment links and settlements
+  paymentLink     String?   // Add this line
+  settlementStatus   String?   @default("pending")
+  settlementAmount   Float?
+  platformFee        Float?
+  transferReference  String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([paymentStatus])
+  @@index([emailStatus])
+  @@index([paidAt])
+}
+
+model Client {
+  id          String    @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  company     String?
+  taxId       String?
+  notes       String?
+  
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  invoices    Invoice[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, email])
+  @@index([userId])
+  @@index([userId, name])
+}
+
+model InvoiceTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("professional")
+  colors      Json?
+  layout      Json?
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+}

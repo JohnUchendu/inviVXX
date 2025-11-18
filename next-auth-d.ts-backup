@@ -23,10 +23,9 @@ declare module "next-auth" {
     id: string           // User ID from database
     email: string        // User's email
     name?: string | null // Optional display name
-    plan?: string        // FIXED: Made optional - 'free' | 'starter' | 'growth' | 'premium'
+    plan: string         // REQUIRED: 'free' | 'starter' | 'growth' | 'premium'
     businessName?: string // Optional: For invoice branding
     businessEmail?: string // Optional: Business contact email
-    image?: string | null // Optional: User avatar
   }
 
   /**
@@ -35,14 +34,6 @@ declare module "next-auth" {
    */
   interface Session {
     user: User  // Now session.user has all our custom fields
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string
-    plan?: string
-    image?: string | null
   }
 }
 

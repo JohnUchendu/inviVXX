@@ -19,14 +19,6 @@ export async function requireAuth() {
 
 export async function requirePaid() {
   const user = await requireAuth()
-  // FIXED: Handle optional plan with default to 'free'
-  if ((user.plan || 'free') === 'free') {
-    throw new Error('Upgrade required')
-  }
+  if ((user as any).plan === 'free') throw new Error('Upgrade required')
   return user
-}
-
-// Helper function to safely get user plan
-export function getUserPlan(user: any): string {
-  return user?.plan || 'free'
 }

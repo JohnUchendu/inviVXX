@@ -6,7 +6,6 @@
 //   return <LandingPage />
 // }
 
-
 // app/page.tsx - Updated home page
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'

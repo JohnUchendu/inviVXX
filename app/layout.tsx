@@ -9,8 +9,8 @@ import Footer from '@/components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'iBiz – Invoice Generator',
-  description: 'Free + Paid invoice generator for Nigerian SMEs',
+  title: 'Nebulapay',
+  description: 'Get paid faster, invoice and client management for Freelancers & SMEs',
   manifest: '/manifest.json',
   themeColor: '#2563eb',
   appleWebApp: {

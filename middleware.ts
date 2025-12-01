@@ -49,7 +49,7 @@ export default withAuth(
     // If user is not authenticated and trying to access protected routes
     if (!req.nextauth.token) {
       const url = req.nextUrl.clone()
-      url.pathname = '/'
+      url.pathname = '/', '/pricing'
       return NextResponse.redirect(url)
     }
   },

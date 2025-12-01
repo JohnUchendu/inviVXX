@@ -21,8 +21,8 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-blue-600">iBiz</div>
-            <span className="text-sm text-gray-500">Invoices</span>
+            <div className="text-2xl font-bold text-blue-600">NebulaPay</div>
+            {/* <span className="text-sm text-gray-500">Invoices</span> */}
           </Link>
 
           {/* Navigation Links */}

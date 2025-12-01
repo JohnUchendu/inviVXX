@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import InvoiceForm from './InvoiceForm'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 export default function LandingPage() {
   const { data: session, status } = useSession()
@@ -50,8 +51,11 @@ export default function LandingPage() {
           <div className="max-w-md mx-auto w-full">
             {/* Logo */}
             <div className="flex items-center space-x-2 mb-12">
-              <div className="w-6 h-6 bg-gray-900 dark:bg-white rounded"></div>
-              <span className="text-lg font-semibold">iBiz</span>
+             
+              <span className="text-lg font-semibold">
+                {/* <Image src="/nebulalogo.png" alt='nebulapay' height={32} width={32}/> */}
+                Nebulapay
+              </span>
             </div>
 
             <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6">
@@ -118,7 +122,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-sm text-gray-500 dark:text-gray-500 text-center">
-              Trusted by 10,000+ Nigerian businesses
+              Trusted by Freelancers and Businesses
             </div>
           </div>
         </div>
@@ -240,6 +244,154 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+ {/* Pricing */}
+      <section id="pricing" className="py-24 dark:bg-black text-gray-900 dark:text-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-16">Simple, Transparent Pricing</h2>
+
+          <div className="grid md:grid-cols-4 gap-8">
+
+            {/* Free */}
+            <div className="p-6 rounded-2xl shadow-sm border">
+              <h3 className="font-bold text-xl mb-1">Free</h3>
+              <p className="text-sm text-gray-600 mb-4">Perfect for getting started</p>
+              <p className="text-3xl font-bold mb-1">₦0<span className="text-base font-medium">/month</span></p>
+              <p className="text-gray-600 text-sm mb-4">New users & occasional use</p>
+
+              <ul className="text-sm space-y-2 mb-4">
+                <li>Unlimited basic invoices</li>
+                <li>PDF email to self</li>
+                <li>1 professional template</li>
+                <li>PWA offline drafting</li>
+                <li>3 invoices per day limit</li>
+                <li>Basic email support</li>
+                <li>✅ Logo support</li>
+                <li>✅ Beautiful invoice templates</li>
+              </ul>
+
+              <p className="text-xs text-red-500 mb-4">Limitations:<br/>• Send to clients disabled<br/>• Limited to 3 invoices/day</p>
+
+              <Link href="/register" className="w-full block text-center py-2 bg-black text-white rounded-xl">Get Started Free</Link>
+              <p className="text-xs text-center mt-2 text-gray-500">No credit card required</p>
+            </div>
+
+            {/* Starter */}
+            <div className="p-6 rounded-2xl shadow-lg border relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">Most Popular</div>
+
+              <h3 className="font-bold text-xl mb-1">Starter</h3>
+              <p className="text-sm text-gray-600 mb-4">For freelancers & small businesses</p>
+              <p className="text-3xl font-bold mb-1">₦2,099<span className="text-base font-medium">/month</span></p>
+              <p className="text-gray-600 text-sm mb-4">1–5 clients per month</p>
+
+              <ul className="text-sm space-y-2 mb-4">
+                <li>Everything in Free</li>
+                <li>Unlimited invoices</li>
+                <li>5 professional templates</li>
+                <li>QR code payments</li>
+                <li>Email to clients</li>
+                <li>Basic analytics (opens)</li>
+                <li>Priority email support</li>
+                <li>✅ Logo & branding</li>
+                <li>✅ Bank transfers</li>
+                <li>✅ Recurring billing</li>
+              </ul>
+
+              <p className="text-xs text-red-500 mb-4">Limitations:<br/>• No bulk sending<br/>• Limited templates</p>
+
+              <Link href="/register" className="w-full block text-center py-2 bg-indigo-600 text-white rounded-xl">Start Here</Link>
+              <p className="text-xs text-center mt-2 text-gray-500">🔄 30-day recurring • Cancel anytime</p>
+            </div>
+
+            {/* Growth */}
+            <div className="p-6  rounded-2xl shadow-sm border">
+              <h3 className="font-bold text-xl mb-1">Growth</h3>
+              <p className="text-sm text-gray-600 mb-4">For growing businesses</p>
+              <p className="text-3xl font-bold mb-1">₦8,099<span className="text-base font-medium">/month</span></p>
+              <p className="text-gray-600 text-sm mb-4">5–15 clients per month</p>
+
+              <ul className="text-sm space-y-2 mb-4">
+                <li>Everything in Starter</li>
+                <li>Send to clients</li>
+                <li>Full email tracking</li>
+                <li>15 professional templates</li>
+                <li>Bulk send (20 invoices)</li>
+                <li>CSV export</li>
+                <li>Advanced analytics</li>
+                <li>Priority phone support</li>
+                <li>✅ Enhanced branding</li>
+                <li>✅ Auto bank settlements</li>
+                <li>✅ Cancel anytime</li>
+              </ul>
+
+              <p className="text-xs text-red-500 mb-4">Limitations:<br/>• No multi-user access</p>
+
+              <Link href="/register" className="w-full block text-center py-2 bg-black text-white rounded-xl">Start 7-Day Trial</Link>
+              <p className="text-xs text-center mt-2 text-gray-500">🔄 30-day recurring • Cancel anytime</p>
+            </div>
+
+            {/* Premium */}
+            <div className="p-6  rounded-2xl shadow-sm border">
+              <h3 className="font-bold text-xl mb-1">Premium</h3>
+              <p className="text-sm text-gray-600 mb-4">For teams & scaling businesses</p>
+              <p className="text-3xl font-bold mb-1">₦25,099<span className="text-base font-medium">/month</span></p>
+              <p className="text-gray-600 text-sm mb-4">15+ clients per month</p>
+
+              <ul className="text-sm space-y-2 mb-4">
+                <li>Everything in Growth</li>
+                <li>Unlimited templates</li>
+                <li>Multi-user access (3 users)</li>
+                <li>API access</li>
+                <li>Custom branding</li>
+                <li>Advanced reporting</li>
+                <li>Dedicated account manager</li>
+                <li>White-label options</li>
+                <li>✅ Full bank integration</li>
+                <li>✅ Instant settlements</li>
+                <li>✅ Flexible billing cycles</li>
+              </ul>
+
+              <Link href="/contact" className="w-full block text-center py-2 bg-gray-800 text-white rounded-xl">Get Premium</Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+ {/* FAQ */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12 dark:bg-black text-gray-900 dark:text-white">Frequently Asked Questions</h2>
+
+          <div className="space-y-6">
+            <div className="border-b border-gray-200 pb-4">
+              <p className="font-semibold text-lg mb-2">Is NebulaPay free?</p>
+              <p className="text-gray-600">Yes, the Free plan gives you 10 invoices/month and basic tools to run your business.</p>
+            </div>
+
+            <div className="border-b border-gray-200 pb-4">
+              <p className="font-semibold text-lg mb-2">Can I know when my client has seen my invoice </p>
+              <p className="text-gray-600">Yes. NebulaPay detects opened emails and alerts you</p>
+            </div>
+
+            <div className="border-b border-gray-200 pb-4">
+              <p className="font-semibold text-lg mb-2">Do you support Nigerian banks?</p>
+              <p className="text-gray-600">Yes. GTBank, Zenith, Access, Kuda, Opay, and more.</p>
+            </div>
+
+            <div className="border-b border-gray-200 pb-4">
+              <p className="font-semibold text-lg mb-2">Can I upgrade anytime?</p>
+              <p className="text-gray-600">Absolutely. Upgrading is instant and you keep all your data.</p>
+            </div>
+
+            <div className="border-b border-gray-200 pb-4">
+              <p className="font-semibold text-lg mb-2">Can my team members log in?</p>
+              <p className="text-gray-600">Yes. Our Premium plan includes multiple seats and custom permissions.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       {/* <div className="py-16 px-8 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
@@ -304,3 +456,15 @@ export default function LandingPage() {
     </div>
   )
 }
+
+
+
+
+
+    
+
+     
+
+     
+    
+    
